@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+
+group = GROUP
+version = VERSION_NAME
+
+android {
+
+    compileSdkVersion TARGET_SDK
+    buildToolsVersion BUILD_TOOLS
+
+    defaultConfig {
+        minSdkVersion MIN_SDK
+        targetSdkVersion TARGET_SDK
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dexOptions {
+        preDexLibraries true
+        javaMaxHeapSize '5g'
+    }
+}
+
+android.libraryVariants.all { variant ->
+
+    task("generate${variant.name}Javadoc", type: Javadoc) {
+        title = "$name $version API"
+        description "Generates Javadoc for $variant.name."
+        source = variant.javaCompile.source
+        ext.androidJar =
+                "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+        options.links("http://docs.oracle.com/javase/7/docs/api/");
+        options.links("http://d.android.com/reference/");
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+    }
+
+}
+
+
+dependencies {
+    // used for debugging
+//    compile 'ru.noties:debug:3.0.0@jar'
+}
+
+if (project.hasProperty('release')) {
+    // check if we removed debug library when releasing
+    final def dependencies = project.configurations.getByName('compile')?.dependencies
+    dependencies?.forEach({ dependency ->
+        if ('ru.noties' == dependency.group
+                && 'debug' == dependency.name) {
+            throw new RuntimeException('Remove `debug` library before releasing')
+        }
+    })
+    apply from: 'https://raw.githubusercontent.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+}
