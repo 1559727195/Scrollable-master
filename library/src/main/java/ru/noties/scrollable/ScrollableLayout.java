@@ -234,6 +234,7 @@ public class ScrollableLayout extends FrameLayout {
         mMotionEventHook = new MotionEventHook(new MotionEventHookCallback() {
             @Override
             public void apply(MotionEvent event) {
+//                ScrollableLayout.super.dispatchTouchEvent(event);
                 ScrollableLayout.super.dispatchTouchEvent(event);
             }
         });
@@ -903,18 +904,22 @@ public class ScrollableLayout extends FrameLayout {
         private final int mTouchSlop;
 
         {
-            final ViewConfiguration vc = ViewConfiguration.get(getContext());
+//            final ViewConfiguration vc = ViewConfiguration.get(getContext());
+//            mTouchSlop = vc.getScaledTouchSlop();
+            final  ViewConfiguration vc = ViewConfiguration.get(getContext());
             mTouchSlop = vc.getScaledTouchSlop();
         }
 
         @SuppressWarnings("NullableProblems")
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//            手指滑动的时候执行的回调（接收到MOVE事件，且位移大于一定距离），
+//            e1,e2分别是之前DOWN事件和当前的MOVE事件，distanceX和distanceY就是当前MOVE事件和上一个MOVE事件的位移量。
 
             final float absX = Math.abs(distanceX);
 
             // forbid horizontal scrolling
-            if (absX > Math.abs(distanceY)
+            if (absX > Math.abs(distanceY)//禁止水平滑动
                     || absX > mTouchSlop) {
                 return false;
             }
@@ -932,7 +937,8 @@ public class ScrollableLayout extends FrameLayout {
             final int distance = (int) (distanceY + .5F);
 
             if (mOverScrollListener == null) {
-                scrollTo(0, y + distance);
+                //scrollTo(0, y + distance);
+                scrollTo(0,y + distance);
                 return y != getScrollY();
             }
 
