@@ -590,7 +590,6 @@ public class ScrollableLayout extends FrameLayout {
                 mAutoMaxScrollYLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-//                        mMaxScrollY = view.getMeasuredHeight();
                         mMaxScrollY = view.getMeasuredHeight();
                     }
                 };
@@ -614,7 +613,8 @@ public class ScrollableLayout extends FrameLayout {
 
     protected int getNewY(int y) {
 
-        final int currentY = getScrollY();
+        //final int currentY = getScrollY();
+        final  int currentY = getScrollY();
 
         if (currentY == y) {
             return -1;
@@ -914,7 +914,7 @@ public class ScrollableLayout extends FrameLayout {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 //            手指滑动的时候执行的回调（接收到MOVE事件，且位移大于一定距离），
-//            e1,e2分别是之前DOWN事件和当前的MOVE事件，distanceX和distanceY就是当前MOVE事件和上一个MOVE事件的位移量。
+//            e1,e2分别是之前DOWN事件和当前的MOVE事件，distanceX和distanceY就是当前MOVE事件和上一个MOVE事件的位移量。//
 
             final float absX = Math.abs(distanceX);
 
@@ -984,12 +984,16 @@ public class ScrollableLayout extends FrameLayout {
         FlingGestureListener(Context context) {
             this.mMinFlingDistance = DipUtils.dipToPx(context, MIN_FLING_DISTANCE_DIP);
 
+            //final ViewConfiguration configuration = ViewConfiguration.get(context);
+            //this.mMinVelocity = configuration.getScaledMinimumFlingVelocity();
             final ViewConfiguration configuration = ViewConfiguration.get(context);
             this.mMinVelocity = configuration.getScaledMinimumFlingVelocity();
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//        用户执行抛操作之后的回调，MOVE事件之后手松开（UP事件）那一瞬间的x或者y方向速度，如果达到一定数值（源码默认是每秒50px），
+//        就是抛操作（也就是快速滑动的时候松手会有这个回调，因此基本上有onFling必然有onScroll）。
 
             if (Math.abs(velocityY) < mMinVelocity) {
                 return false;
@@ -1021,7 +1025,7 @@ public class ScrollableLayout extends FrameLayout {
                 final int duration;
 
                 // we will pass Integer.MAX_VALUE to calculate the maximum possible fling
-                mScroller.fling(0, nowY, 0, velocity, 0, 0, 0, Integer.MAX_VALUE);
+                mScroller.fling(0,nowY,0,velocity,0,0,0,Integer.MAX_VALUE);
                 maxPossibleFinalY = mScroller.getFinalY();
                 duration = mScroller.getSplineFlingDuration(velocityY);
                 mOnFlingOverListener.onFlingOver(maxPossibleFinalY - mMaxScrollY, duration);

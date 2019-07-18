@@ -13,7 +13,7 @@ class ViewUtils {
 
     static void removeGlobalLayoutListener(View view, ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener) {
 
-        final ViewTreeObserver observer = view.getViewTreeObserver();
+        final  ViewTreeObserver observer = view.getViewTreeObserver();
         if (!observer.isAlive()) {
             return;
         }

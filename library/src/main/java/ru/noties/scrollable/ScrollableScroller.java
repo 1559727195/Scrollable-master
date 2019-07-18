@@ -148,12 +148,14 @@ public class ScrollableScroller  {
     public ScrollableScroller(Context context, Interpolator interpolator, boolean flywheel) {
         mFinished = true;
         if (interpolator == null) {
+            //mInterpolator = new ViscousFluidInterpolator();
             mInterpolator = new ViscousFluidInterpolator();
         } else {
             mInterpolator = interpolator;
         }
         mPpi = context.getResources().getDisplayMetrics().density * 160.0f;
-        mDeceleration = computeDeceleration(ViewConfiguration.getScrollFriction());
+        //mDeceleration = computeDeceleration(ViewConfiguration.getScrollFriction());
+        mDeceleration = computeDeceleration(ViewConfiguration.getScrollFriction());////摩擦力，用来计算减速度
         mFlywheel = flywheel;
 
         mPhysicalCoeff = computeDeceleration(0.84f); // look and feel tuning
@@ -282,7 +284,7 @@ public class ScrollableScroller  {
      * @param startX Starting point of the scroll (X)
      * @param startY Starting point of the scroll (Y)
      * @param velocityX Initial velocity of the fling (X) measured in pixels per
-     *        second.
+     *        second.每秒的速度
      * @param velocityY Initial velocity of the fling (Y) measured in pixels per
      *        second
      * @param minX Minimum X value. The scroller will not scroll past this
@@ -295,7 +297,7 @@ public class ScrollableScroller  {
      *        point.
      */
     public void fling(int startX, int startY, int velocityX, int velocityY,
-                      int minX, int maxX, int minY, int maxY) {
+                      int minX, int maxX, int minY, int maxY) {//
         // Continue a scroll or fling in progress
         if (mFlywheel && !mFinished) {
             float oldVel = getCurrVelocity();
@@ -312,7 +314,8 @@ public class ScrollableScroller  {
             if (Math.signum(velocityX) == Math.signum(oldVelocityX) &&
                     Math.signum(velocityY) == Math.signum(oldVelocityY)) {
                 velocityX += oldVelocityX;
-                velocityY += oldVelocityY;
+                //velocityY += oldVelocityY;
+                velocityY+= oldVelocityY;
             }
         }
 
@@ -323,7 +326,8 @@ public class ScrollableScroller  {
 
         mVelocity = velocity;
         mDuration = getSplineFlingDuration(velocity);
-        mStartTime = AnimationUtils.currentAnimationTimeMillis();
+        //mStartTime = AnimationUtils.currentAnimationTimeMillis();
+        mStartTime =AnimationUtils.currentAnimationTimeMillis();
         mStartX = startX;
         mStartY = startY;
 
@@ -429,7 +433,7 @@ public class ScrollableScroller  {
         }
 
         @Override
-        public float getInterpolation(float input) {
+        public float getInterpolation(float input) {//
             final float interpolated = VISCOUS_FLUID_NORMALIZE * viscousFluid(input);
             if (interpolated > 0) {
                 return interpolated + VISCOUS_FLUID_OFFSET;
